@@ -34,7 +34,7 @@ Ethereum['Close_eth_tag1'] = Ethereum['Close'].shift(1)
 Ethereum['Close_eth_tag2'] = Ethereum['Close'].shift(2)
 
 
-x_train = BitCoin['Close_bit_tag1', 'Close_bit_tag2']
+x_train = BitCoin[['Close_bit_tag1', 'Close_bit_tag2']]
 y_train = BitCoin['Close']
 
 
