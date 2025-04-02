@@ -59,3 +59,39 @@ r2_2 = r2_score(y_test2, PredictionModel2)
 print("Accuracy of Ethereum Close Prediction Model using R^2 Score: " + str(r2_2))
 
 # ---------- RANDOM FOREST USING HIGH ----------
+
+# For High_bit_tag1, shift the High column down by 1 row
+# For High_bit_tag2, shift the High column down by 2 rows
+BitcoinCSV_df['High_bit_tag1'] = BitcoinCSV_df['High'].shift(1)
+BitcoinCSV_df['High_bit_tag2'] = BitcoinCSV_df['High'].shift(2)
+
+EthereumCSV_df['High_eth_tag1'] = EthereumCSV_df['High'].shift(1)
+EthereumCSV_df['High_eth_tag2'] = EthereumCSV_df['High'].shift(2)
+
+# Creating training data, with x_train using Close_bit_tag1 and Close_bit_tag2, and y_train using 'Close'
+x_train3, x_test3, y_train3, y_test3 = train_test_split(BitcoinCSV_df[['High_bit_tag1', 'High_bit_tag2']], BitcoinCSV_df['High'], test_size=0.2, random_state=42)
+x_train4, x_test4, y_train4, y_test4 = train_test_split(EthereumCSV_df[['High_eth_tag1', 'High_eth_tag2']], EthereumCSV_df['High'], test_size=0.2, random_state=42)
+
+# Create a random forest using 100 trees and 42 random selection, as well as fit x_train and y_train
+TrainingTree1 = RandomForestRegressor(n_estimators=100, random_state=42)
+TrainingTree1.fit(x_train3, y_train3)
+
+TrainingTree2 = RandomForestRegressor(n_estimators=100, random_state=42)
+TrainingTree2.fit(x_train4, y_train4)
+
+# Create a prediction model by predicting x_train on the training tree
+PredictionModel3 = TrainingTree1.predict(x_test3)
+r2_3 = r2_score(y_test3, PredictionModel1)
+print("Accuracy of Bitcoin High Prediction Model using R^2 Score: " + str(r2_3))
+
+PredictionModel4 = TrainingTree2.predict(x_test4)
+r2_4 = r2_score(y_test4, PredictionModel2)
+print("Accuracy of Ethereum High Prediction Model using R^2 Score: " + str(r2_4))
+
+# ---------- RANDOM FOREST USING LOW ----------
+
+
+# ---------- RANDOM FOREST USING VOLUME ----------
+
+
+# ---------- RANDOM FOREST USING MARKETCAP ----------
