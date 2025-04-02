@@ -1,47 +1,85 @@
 import pandas as pd
 import numpy as np
 import  matplotlib.pyplot as plt
+from libpasteurize.fixes.feature_base import Features
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import mean_squared_error, mean_absolute_error
-
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
 bit_Coin_File = pd.read_csv("../Data/coin_Bitcoin.csv")
 Ethereum_File = pd.read_csv("../Data/coin_Ethereum.csv")
 
-BitCoin = bit_Coin_File
-Ethereum = Ethereum_File
-#
-#
-BitCoin['Date'] = pd.to_datetime(BitCoin['Date'])
-Ethereum['Date'] = pd.to_datetime(Ethereum['Date'])
-
-##Clean Here In the Future if dublicates by datte
 
 
+def makeGraph(fileInput,TestSize,y_test,Predictions,):
+    plt.figure(figsize=(10, 6))
+    plt.plot(TestSize['Date'], y_test, label='Actual Close Price', marker='o')
+    plt.plot(TestSize['Date'], Predictions, label='Predicted Close Price', marker='x')
+    plt.xlabel('Date')
+    plt.ylabel('Close Price')
+    plt.title(f'FileName here Actual vs Predicted Close Price')
+    plt.legend()
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.show()
 
-BitCoin.sort_values('Date')
-Ethereum.sort_values('Date')
+def accuracy(predictions, y_test):
+    AllowedError = .05
 
-#Check if any data is missing all catagorys
+    correctPredictions = np.mean((np.abs(predictions-y_test)/y_test) <= AllowedError)
+    Accuracy = correctPredictions * 100
+    return Accuracy
 
-
-
-
-BitCoin['Close_bit_tag1'] = BitCoin['Close'].shift(1)
-BitCoin['Close_bit_tag2'] = BitCoin['Close'].shift(2)
-
-Ethereum['Close_eth_tag1'] = Ethereum['Close'].shift(1)
-Ethereum['Close_eth_tag2'] = Ethereum['Close'].shift(2)
+def r2(predictions, y_test):
+    return r2_score(y_test,predictions)
 
 
-x_train = BitCoin[['Close_bit_tag1', 'Close_bit_tag2']]
-y_train = BitCoin['Close']
+def RunProgram(fileInput, target):
+
+    fileInput['Date'] = pd.to_datetime(fileInput['Date'])
+
+    fileInput.sort_values(['Date'],inplace=True)
+
+    fileInput['Open1'] = fileInput['Open'].shift(1)
+    fileInput['High1'] = fileInput['High'].shift(1)
+    fileInput['Low1'] = fileInput['Low'].shift(1)
+    fileInput['Close1'] = fileInput['Close'].shift(1)
+    fileInput['High2'] = fileInput['High'].shift(2)
+    fileInput['Low2'] = fileInput['Low'].shift(2)
+    fileInput['Close2'] = fileInput['Close'].shift(2)
+    fileInput['Open2'] = fileInput['Open'].shift(2)
+
+    FeaturesToTrain = ['Open1','High1','Low1','Close1','High2','Low2','Close2','Open2']
+    target = target
+
+    x_train = fileInput[FeaturesToTrain]
+    y_train = fileInput[target]
+
+    makeTree = RandomForestRegressor(n_estimators=100,random_state=42)
+    makeTree.fit(x_train, y_train)
+
+    testData = int(len(fileInput)*0.8)
+    TestSize = fileInput.iloc[testData:]
+    x_test = TestSize[FeaturesToTrain]
+    y_test = TestSize[target]
+    predictions = makeTree.predict(x_test)
+    # mse = mean_squared_error(y_test, predictions)
+    # mae = mean_absolute_error(y_test, predictions)
+
+    makeGraph(fileInput,TestSize,y_test,predictions,)
+    # print(mae)
+    # print(mse)
+
+    accSize = accuracy(predictions, y_test)
+    r2 = r2_score(y_test,predictions)
+    print(accSize)
+    print(r2)
 
 
 
-TreeTrain = RandomForestRegressor(n_estimators=100,random_state=40)
 
-TreeTrain.fit(x_train, y_train)
 
-Predicted = TreeTrain.predict(x_train)
-print(Predicted)
+
+RunProgram(bit_Coin_File, "Close")
+print("")
+RunProgram(Ethereum_File, "Close")
+
