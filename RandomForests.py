@@ -68,7 +68,7 @@ BitcoinCSV_df['High_bit_tag2'] = BitcoinCSV_df['High'].shift(2)
 EthereumCSV_df['High_eth_tag1'] = EthereumCSV_df['High'].shift(1)
 EthereumCSV_df['High_eth_tag2'] = EthereumCSV_df['High'].shift(2)
 
-# Creating training data, with x_train using Close_bit_tag1 and Close_bit_tag2, and y_train using 'Close'
+# Creating training data, with x_train using High_bit_tag1 and High_bit_tag2, and y_train using 'High'
 x_train3, x_test3, y_train3, y_test3 = train_test_split(BitcoinCSV_df[['High_bit_tag1', 'High_bit_tag2']], BitcoinCSV_df['High'], test_size=0.2, random_state=42)
 x_train4, x_test4, y_train4, y_test4 = train_test_split(EthereumCSV_df[['High_eth_tag1', 'High_eth_tag2']], EthereumCSV_df['High'], test_size=0.2, random_state=42)
 
@@ -98,7 +98,7 @@ BitcoinCSV_df['Low_bit_tag2'] = BitcoinCSV_df['Low'].shift(2)
 EthereumCSV_df['Low_eth_tag1'] = EthereumCSV_df['Low'].shift(1)
 EthereumCSV_df['Low_eth_tag2'] = EthereumCSV_df['Low'].shift(2)
 
-# Creating training data, with x_train using Close_bit_tag1 and Close_bit_tag2, and y_train using 'Close'
+# Creating training data, with x_train using Low_bit_tag1 and Low_bit_tag2, and y_train using 'Low'
 x_train5, x_test5, y_train5, y_test5 = train_test_split(BitcoinCSV_df[['Low_bit_tag1', 'Low_bit_tag2']], BitcoinCSV_df['Low'], test_size=0.2, random_state=42)
 x_train6, x_test6, y_train6, y_test6 = train_test_split(EthereumCSV_df[['Low_eth_tag1', 'Low_eth_tag2']], EthereumCSV_df['Low'], test_size=0.2, random_state=42)
 
@@ -120,5 +120,32 @@ print("Accuracy of Ethereum Low Prediction Model using R^2 Score: " + str(r2_6))
 
 # ---------- RANDOM FOREST USING VOLUME ----------
 
+# For Volume_bit_tag1, shift the Volume column down by 1 row
+# For Volume_bit_tag2, shift the Volume column down by 2 rows
+BitcoinCSV_df['Volume_bit_tag1'] = BitcoinCSV_df['Volume'].shift(1)
+BitcoinCSV_df['Volume_bit_tag2'] = BitcoinCSV_df['Volume'].shift(2)
+
+EthereumCSV_df['Volume_eth_tag1'] = EthereumCSV_df['Volume'].shift(1)
+EthereumCSV_df['Volume_eth_tag2'] = EthereumCSV_df['Volume'].shift(2)
+
+# Creating training data, with x_train using Volume_bit_tag1 and Volume_bit_tag2, and y_train using 'Volume'
+x_train7, x_test7, y_train7, y_test7 = train_test_split(BitcoinCSV_df[['Volume_bit_tag1', 'Volume_bit_tag2']], BitcoinCSV_df['Volume'], test_size=0.2, random_state=42)
+x_train8, x_test8, y_train8, y_test8 = train_test_split(EthereumCSV_df[['Volume_eth_tag1', 'Volume_eth_tag2']], EthereumCSV_df['Volume'], test_size=0.2, random_state=42)
+
+# Create a random forest using 100 trees and 42 random selection, as well as fit x_train and y_train
+TrainingTree7 = RandomForestRegressor(n_estimators=100, random_state=42)
+TrainingTree7.fit(x_train7, y_train7)
+
+TrainingTree8 = RandomForestRegressor(n_estimators=100, random_state=42)
+TrainingTree8.fit(x_train8, y_train8)
+
+# Create a prediction model by predicting x_train on the training tree
+PredictionModel7 = TrainingTree7.predict(x_test7)
+r2_7 = r2_score(y_test7, PredictionModel7)
+print("Accuracy of Bitcoin Volume Prediction Model using R^2 Score: " + str(r2_7))
+
+PredictionModel8 = TrainingTree8.predict(x_test8)
+r2_8 = r2_score(y_test8, PredictionModel8)
+print("Accuracy of Ethereum Volume Prediction Model using R^2 Score: " + str(r2_8))
 
 # ---------- RANDOM FOREST USING MARKETCAP ----------
