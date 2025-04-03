@@ -25,4 +25,7 @@ def process_data():
     #print("After normalization: ")
     #print(file_name_df.head())
 
-    return file_name_df
+    # convert it into a numpy array before returning
+    np_processed = file_name_df.to_numpy()
+
+    return { "numpy": np_processed, "df": file_name_df}
