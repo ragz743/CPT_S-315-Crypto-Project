@@ -149,3 +149,31 @@ r2_8 = r2_score(y_test8, PredictionModel8)
 print("Accuracy of Ethereum Volume Prediction Model using R^2 Score: " + str(r2_8))
 
 # ---------- RANDOM FOREST USING MARKETCAP ----------
+
+# For Marketcap_bit_tag1, shift the Marketcap column down by 1 row
+# For Marketcap_bit_tag2, shift the Marketcap column down by 2 rows
+BitcoinCSV_df['Marketcap_bit_tag1'] = BitcoinCSV_df['Marketcap'].shift(1)
+BitcoinCSV_df['Marketcap_bit_tag2'] = BitcoinCSV_df['Marketcap'].shift(2)
+
+EthereumCSV_df['Marketcap_eth_tag1'] = EthereumCSV_df['Marketcap'].shift(1)
+EthereumCSV_df['Marketcap_eth_tag2'] = EthereumCSV_df['Marketcap'].shift(2)
+
+# Creating training data, with x_train using Marketcap_bit_tag1 and Marketcap_bit_tag2, and y_train using 'Marketcap'
+x_train9, x_test9, y_train9, y_test9 = train_test_split(BitcoinCSV_df[['Marketcap_bit_tag1', 'Marketcap_bit_tag2']], BitcoinCSV_df['Marketcap'], test_size=0.2, random_state=42)
+x_train10, x_test10, y_train10, y_test10 = train_test_split(EthereumCSV_df[['Marketcap_eth_tag1', 'Marketcap_eth_tag2']], EthereumCSV_df['Marketcap'], test_size=0.2, random_state=42)
+
+# Create a random forest using 100 trees and 42 random selection, as well as fit x_train and y_train
+TrainingTree9 = RandomForestRegressor(n_estimators=100, random_state=42)
+TrainingTree9.fit(x_train9, y_train9)
+
+TrainingTree10 = RandomForestRegressor(n_estimators=100, random_state=42)
+TrainingTree10.fit(x_train10, y_train10)
+
+# Create a prediction model by predicting x_train on the training tree
+PredictionModel9 = TrainingTree9.predict(x_test9)
+r2_9 = r2_score(y_test9, PredictionModel9)
+print("Accuracy of Bitcoin Marketcap Prediction Model using R^2 Score: " + str(r2_9))
+
+PredictionModel10 = TrainingTree10.predict(x_test10)
+r2_10 = r2_score(y_test10, PredictionModel10)
+print("Accuracy of Ethereum Marketcap Prediction Model using R^2 Score: " + str(r2_10))
