@@ -3,8 +3,8 @@ import pandas as pd
 from scipy.stats import zscore
 
 
-# process bitcoin data into sorted dates
-def process_data(sequence_length=30):
+# process bitcoin data into sorted dates with normalized values
+def process_data():
     
     # read in the data file
     file_name_df = pd.read_csv("./data/coin_Bitcoin.csv")
@@ -22,17 +22,7 @@ def process_data(sequence_length=30):
     file_name_df['Close'] = zscore(file_name_df['Close'])
     file_name_df['Volume'] = zscore(file_name_df['Volume'])
     file_name_df['Marketcap'] = zscore(file_name_df['Marketcap'])
-    features = ['High', 'Low', 'Open', 'Close', 'Volume', 'Marketcap']
-    data = file_name_df[features].values
     #print("After normalization: ")
     #print(file_name_df.head())
-    print("Before sequences: ", file_name_df.head())
 
-    # Create sequences
-    features = ['High', 'Low', 'Open', 'Close', 'Volume', 'Marketcap']
-    x, y = [], []
-    for i in range(len(data) - sequence_length):
-        x.append(data[i:i+sequence_length])  # Previous `sequence_length` days
-        y.append(data[i+sequence_length][3])  # Predict 'Close' price
-    print("After sequences: ", file_name_df.head())
-    return np.array(x), np.array(y)
+    return file_name_df
