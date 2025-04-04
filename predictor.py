@@ -3,9 +3,9 @@ import torch.nn as nn
 
 
 #https://pytorch.org/docs/stable/generated/torch.nn.Module.html
-class CryptoPreedictor(nn.Module):
+class CryptoPredictor(nn.Module):
     def __init__(self, input_size, hidden_size,num_layers, output_size):
-        super(CryptoPreedictor, self).__init__()
+        super(CryptoPredictor, self).__init__()
         self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
         self.fc = nn.Linear(hidden_size, output_size)
 

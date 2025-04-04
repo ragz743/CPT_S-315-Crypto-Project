@@ -13,6 +13,10 @@ def process_data():
     # sort by date(ascending), set index back to original, and drop empty columns
     file_name_df = file_name_df.sort_values(by='Date', ascending=True).reset_index(drop=True)
 
+    # save the original close stats before we normalize
+    original_close_mean = file_name_df['Close'].mean()
+    original_close_std = file_name_df['Close'].std()
+
     # standardize with z-score standardization
 
     # standardize high, low, open, close, marketvolume, and market cap
@@ -28,4 +32,4 @@ def process_data():
     # convert it into a numpy array before returning
     np_processed = file_name_df.to_numpy()
 
-    return { "numpy": np_processed, "df": file_name_df}
+    return { "numpy": np_processed, "df": file_name_df, "close_mean": original_close_mean, "close_std": original_close_std}

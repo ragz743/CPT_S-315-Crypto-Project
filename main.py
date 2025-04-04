@@ -1,6 +1,6 @@
-from neural import tensor
 from process_data import process_data
 from sequence import sequence_data
+from training import tensor
 
 
 def main():
@@ -19,7 +19,7 @@ def main():
     print("Sequence Data Y:")
     print(y)
     '''
-    tensor(processed_data_object["df"], sequence_x, sequence_y)
+    tensor(processed_data_object, sequence_x, sequence_y)
 
 if __name__ == "__main__":
     main()
