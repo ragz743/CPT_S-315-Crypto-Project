@@ -10,10 +10,10 @@ def tensor(processed_data, sequence_data_x, sequence_data_y):
 
     # set our input data as tensor (type float)
     x_tensor = torch.from_numpy(sequence_data_x).float()
-    print("X TENSOR: ", x_tensor)
+    # print("X TENSOR: ", x_tensor)
     # reshape it otherwise it causes warning
     y_tensor = torch.from_numpy(sequence_data_y.reshape(-1, 1)).float()
-    print("Y TENSOR: ", y_tensor)
+    # print("Y TENSOR: ", y_tensor)
 
 
     # parameters for training
@@ -51,7 +51,7 @@ def tensor(processed_data, sequence_data_x, sequence_data_y):
     model.eval()
     with torch.no_grad():
         predicted_normalized = model(x_tensor)
-    print("Predictions Normalized:", predicted_normalized)
+    # print("Predictions Normalized:", predicted_normalized)
 
     # use the original statistics from processed_data (not from the normalized dataframe)
     close_mean = processed_data["close_mean"]
@@ -60,4 +60,8 @@ def tensor(processed_data, sequence_data_x, sequence_data_y):
     # converted it back to the original scale
     predicted_original = predicted_normalized * close_std + close_mean
 
-    print("Predictions Original Scale:", predicted_original)
+    # print("Predictions Original Scale:", predicted_original)
+
+    return predicted_original, y_tensor
+
+    # evaluate the predictions
